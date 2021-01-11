@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig 
+
+metadata:
+  name: demo-cluster
+  region: us-east-1
+
+nodeGroups:
+  - name: demo-ng 
+    instanceType: t2.micro 
+    desiredCapacity: 3
+    minSize: 2
+    maxSize: 5
+    ssh:
+      publicKeyName: starseed
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
