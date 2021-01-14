@@ -1,0 +1,35 @@
+# 
+# for debugging incase any errors with making kubectl api calls
+apiVersion: v1
+data:
+  mapRoles: |
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::324877108806:role/eksctl-demo-cluster-nodegroup-dem-NodeInstanceRole-BWP56G27BI1C
+      username: system:node:{{EC2PrivateDNSName}}
+  mapUsers: | 
+    - userarn: arn:aws:iam::324877108806:user/k8s-clusteradmin-1
+    username: k8s-clusteradmin-1 
+    groups:
+      - system:masters
+    []
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-01-14T03:40:17Z"
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:mapRoles: {}
+        f:mapUsers: {}
+    manager: eksctl
+    operation: Update
+    time: "2021-01-14T03:40:17Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "1678"
+  selfLink: /api/v1/namespaces/kube-system/configmaps/aws-auth
+  uid: b84c80ee-c038-4d8f-ac17-fbd1586e3621
