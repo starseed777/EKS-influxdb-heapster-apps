@@ -16,3 +16,4 @@ create a new secret for mysql db- kubectl create secret generic my-sql-pass --fr
 
 EFS pre req for worker nodes - enable efs utils >> sudo yum install -y amazon-efs-utils 
 
+mount target in efs >> put nodegroup SG with efs in default VPC 

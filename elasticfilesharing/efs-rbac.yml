@@ -5,9 +5,9 @@ metadata:
   name: nfs-provisioner-role-binding
 subjects:
   - kind: ServiceAccount
-    name: default
+    name: efs-provisioner
     namespace: efs
 roleRef:
   kind: ClusterRole 
-  name: k8s-clusteradmin-1 #STILL IN PROGRESS
+  name: k8s-clusteradmin-1 
   apiGroup: rbac.authorization.k8s.io
