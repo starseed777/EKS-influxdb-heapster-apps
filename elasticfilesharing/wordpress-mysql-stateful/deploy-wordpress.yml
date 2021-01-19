@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service 
+
+metadata:
+  name: wordpress-statefulset
+  namespace: efs
+  labels:
+    app: wordpress-statefulset
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress-statefulset
+    tier: frontend
+  type: LoadBalancer
+
+--- 
+
+apiVersion: apps/v1
+kind: StatefulSet 
+
+metadata:
+  name: wordpress-statefulset
+  namespace: efs
+  labels:
+    app: wordpress-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: wordpress-statefulset
+      tier: frontend
+  replicas: 1
+  serviceName: wordpress-statefulset-frontend
+  template:
+    metadata:
+      labels:
+        app: wordpress-statefulset
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-sql-pass
+              key: password
+        volumeMounts:
+        - name: efs-wordpress
+          mountPath: /var/www/html
+        ports:
+        - containerPort: 80
+          name: wordpress
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: efs-wordpress
+  #   spec:
+  #     accessModes: [ "ReadWriteMany" ]
+  #     resources:
+  #       requests:
+  #         storage: 1Gi
+      volumes:
+      - name: efs-wordpress
+        persistentVolumeClaim:
+          claimName: efs-wordpress 

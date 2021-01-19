@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service 
+
+metadata:
+  name: wordpress-mysql
+  namespace: efs  
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql 
+  clusterIP: None 
+
+--- 
+
+apiVersion: apps/v1
+kind: StatefulSet 
+
+metadata:
+  name: mysql-statefulset
+  namespace: efs 
+  labels:
+    app: mysql-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  serviceName: wordpress-statefulset-backend
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-sql-pass
+              key: password
+        volumeMounts:
+        - name: efs-mysql
+          mountPath: /var/lib/mysql
+        ports:
+        - containerPort: 3306
+          name: mysql
+      volumes:
+      - name: efs-mysql
+        persistentVolumeClaim:
+          claimName: efs-mysql

@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: efs-provisioner
+  namespace: efs 
+data:
+  file.system.id: fs-787f688d
+  aws.region: us-east-1
+  provisioner.name: demoefs/aws-efs
+  dns.name: fs-787f688d.efs.us-east-1.amazonaws.com
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+
+metadata:
+  name: efs-provisioner
+  namespace: efs 
+spec:
+  selector:
+    matchLabels:
+      app: efs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: efs-provisioner
+    spec:
+      serviceAccount: efs-provisioner
+      containers:
+        - name: efs-provisioner
+          image: quay.io/external_storage/efs-provisioner:latest
+          env:
+            - name: FILE_SYSTEM_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: file.system.id
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: aws.region
+            - name: PROVISIONER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: provisioner.name
+          volumeMounts:
+            - name: pv-volume
+              mountPath: /persistentvolumes
+      volumes:
+        - name: pv-volume
+          nfs:
+            server: fs-787f688d.efs.us-east-1.amazonaws.com
+            path: /
+
+--- 
+
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: aws-efs
+provisioner: demoEFS/aws-efs
