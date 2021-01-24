@@ -10,9 +10,9 @@ Statelessapplication folder >> redis php guestbook application files, no persist
 
 Stateful application folder >> another wordpress app but with persisted EBS volumes.
 
-PREREQ file >> notes / little commands for documentation purposes and some pre requisites notes for setting up the dashboard
+PREREQ file >> notes / little commands for documentation purposes and some pre requisites notes for setting up the dashboard.
 
-rbac / aws-auth files >> user authentication for eks cluster 
+rbac / aws-auth files >> user authentication for eks cluster. 
 
-eksjawnt >> main cluster file 
+eksjawnt >> main cluster file. 
 
